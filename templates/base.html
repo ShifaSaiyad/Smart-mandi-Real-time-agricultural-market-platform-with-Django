@@ -1,0 +1,80 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Smart Mandi{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/theme.css' %}?v=7">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <div class="site-bg"></div>
+    <header class="site-header">
+        <div class="page-shell nav-wrap">
+            <a href="{% url 'home' %}" class="brand">
+                <span class="brand-mark"></span>
+                <span>
+                    <strong>Smart Mandi</strong>
+                    <small>Gujarat Mandi Finder</small>
+                </span>
+            </a>
+
+            <nav class="main-nav">
+                <a href="{% url 'home' %}">Home</a>
+                {% if request.user.is_authenticated %}
+                    {% if request.user.is_staff or request.user.is_superuser %}
+                        <a href="{% url 'admin_dashboard:dashboard' %}">Admin Dashboard</a>
+                    {% else %}
+                        <a href="{% url 'find_mandi' %}">Find Mandi</a>
+                        <a href="{% url 'feedback_app:feedback' %}">Feedback</a>
+                        <a href="{% url 'query_app:query' %}">Query112</a>
+                        {% comment %} <a href="{% url 'user_app:dashboard' %}">Dashboard</a> {% endcomment %}
+                        <a href="{% url 'user_app:profile' %}">Profile</a>
+                    {% endif %}
+                    <a href="{% url 'user_app:logout' %}">Logout</a>
+                {% else %}
+                    <a href="{% url 'find_mandi' %}">Find Mandi</a>
+                    <a href="{% url 'feedback_app:feedback' %}">Feedback</a>
+                    <a href="{% url 'query_app:query' %}">Query</a>
+                    <a href="{% url 'user_app:register' %}">Register</a>
+                    <a href="{% url 'user_app:login' %}">Login</a>
+                {% endif %}
+                <a href="{% url 'about_app:about' %}">About</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page-shell main-content">
+        {% if messages %}
+            <section class="flash-stack">
+                {% for message in messages %}
+                    <div class="flash flash-{{ message.tags|default:'info' }}">{{ message }}</div>
+                {% endfor %}
+            </section>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="page-shell footer-grid">
+            <div>
+                <div class="section-title">Smart Mandi</div>
+                <p class="footer-text">A cleaner mandi discovery project with user accounts, feedback, queries, and a stronger visual identity.</p>
+            </div>
+            <div class="footer-links">
+                <a href="{% url 'about_app:about' %}">About</a>
+                {% if not request.user.is_authenticated or not request.user.is_staff and not request.user.is_superuser %}
+                    <a href="{% url 'find_mandi' %}">Find Mandi</a>
+                    <a href="{% url 'feedback_app:feedback' %}">Feedback</a>
+                    <a href="{% url 'query_app:query' %}">Query</a>
+                {% endif %}
+                <a href="{% url 'admin:index' %}">Admin</a>
+            </div>
+        </div>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

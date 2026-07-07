@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Smart Mandi | Find Nearby Markets{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+{% endblock %}
+
+{% block content %}
+<section class="hero-panel">
+    <div>
+        <div class="section-title">Mandi Finder</div>
+        <h1>Find the nearest mandi around your city.</h1>
+        <p>
+            Search by city or use your current location to explore nearby agricultural markets in Gujarat.
+            After your location appears on the map, choose mandis within 20 km or expand the search to 50 km.
+        </p>
+        <div class="hero-meta">
+            <span class="pill">Location Search</span>
+            <span class="pill">Leaflet Map</span>
+            <span class="pill">User Portal</span>
+        </div>
+    </div>
+    <a href="{% url 'home' %}" class="btn btn-secondary">Back To Home</a>
+</section>
+
+<section class="toolbar">
+    <form method="get" action="{% url 'find_mandi' %}" class="search-form">
+        <input class="field" type="text" name="city" value="{{ city|default:'' }}"
+               placeholder="Enter city name like Anand or Nadiad" required>
+        <button class="btn btn-primary" type="submit">Search City</button>
+    </form>
+    <button class="btn btn-secondary" onclick="getLocation()">Use My Location</button>
+</section>
+
+<div id="map"></div>
+
+{% if lat %}
+<section class="cta-bar radius-actions">
+    <form method="get" action="/mandis/" class="inline-action">
+        <input type="hidden" name="lat" value="{{ lat }}">
+        <input type="hidden" name="lon" value="{{ lon }}">
+        <input type="hidden" name="city" value="{{ city }}">
+        <input type="hidden" name="radius" value="20">
+        <button class="btn {% if nearby_radius_km == 20 %}btn-primary{% else %}btn-secondary{% endif %}" type="submit">
+            Find Mandis Within 20 KM
+        </button>
+    </form>
+    <form method="get" action="/mandis/" class="inline-action">
+        <input type="hidden" name="lat" value="{{ lat }}">
+        <input type="hidden" name="lon" value="{{ lon }}">
+        <input type="hidden" name="city" value="{{ city }}">
+        <input type="hidden" name="radius" value="50">
+        <button class="btn {% if nearby_radius_km == 50 %}btn-primary{% else %}btn-secondary{% endif %}" type="submit">
+            Find Mandis Within 50 KM
+        </button>
+    </form>
+</section>
+{% endif %}
+
+<section class="results">
+    {% if mandis %}
+        <div class="results-head">
+            <h2>{{ mandis|length }} Mandis Near {{ city }}</h2>
+            <span class="pill">Within {{ nearby_radius_km|default:20 }} km</span>
+            <span class="pill">Click any row to open price details</span>
+        </div>
+        <div class="table-card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Mandi Name</th>
+                        <th>District</th>
+                        <th>Distance</th>
+                        <th>Price Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for mandi in mandis %}
+                    <tr onclick="window.location='/mandi/{{ mandi.name|urlencode }}/'" style="cursor:pointer;">
+                        <td>{{ forloop.counter }}</td>
+                        <td><a class="market-link" href="/mandi/{{ mandi.name|urlencode }}/">{{ mandi.name }}</a></td>
+                        <td class="muted">{{ mandi.district }}</td>
+                        <td><span class="dist-badge">{{ mandi.distance }} km</span></td>
+                        <td><a href="/mandi/{{ mandi.name|urlencode }}/">View Prices</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% elif city and lat %}
+        <div class="table-card">
+            <div class="empty-state">
+                No mandis were found within {{ nearby_radius_km|default:20 }} km of <strong>{{ city }}</strong>.<br>
+                Try another city name or use your current GPS location.
+            </div>
+        </div>
+    {% elif city %}
+        <div class="table-card">
+            <div class="empty-state">
+                Could not find map location for <strong>{{ city }}</strong> from local mandi data or online search.<br>
+                Try a Gujarat mandi or district name like Rajkot, Anand, Amreli, or Ahmedabad.
+            </div>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+        {% if lat and lon %}var lat={{lat}}, lon={{lon}}, zoom=12;
+        {% else %}var lat=22.3, lon=72.6, zoom=8;{% endif %}
+
+        var map = L.map('map').setView([lat, lon], zoom);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap'
+        }).addTo(map);
+
+        {% if lat and lon %}
+        L.marker([lat, lon]).addTo(map).bindPopup("{{ city|escapejs }}").openPopup();
+        {% endif %}
+
+        {% if mandis %}
+        var mandis = JSON.parse('{{ mandis_json|escapejs }}');
+        var bounds = [[lat, lon]];
+        mandis.forEach(function(mandi) {
+            var marker = L.marker([mandi.lat, mandi.lon]).addTo(map);
+            marker.bindTooltip(
+                '<b>' + mandi.name + '</b><br>' + mandi.district + '<br>' + mandi.distance + ' km',
+                { permanent: false, direction: 'top', offset: [0, -10] }
+            );
+            marker.on('click', function () {
+                window.location = '/mandi/' + encodeURIComponent(mandi.name) + '/';
+            });
+            bounds.push([mandi.lat, mandi.lon]);
+        });
+        map.fitBounds(bounds, { padding: [30, 30] });
+        {% endif %}
+
+        function getLocation() {
+            if (!navigator.geolocation) {
+                alert("Geolocation is not supported in this browser.");
+                return;
+            }
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var currentLat = position.coords.latitude;
+                var currentLon = position.coords.longitude;
+                window.location = '/mandis/?lat=' + currentLat + '&lon=' + currentLon + '&city=Current+Location';
+            }, function() {
+                alert("Location access was denied.");
+            });
+        }
+</script>
+{% endblock %}

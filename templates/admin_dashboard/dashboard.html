@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard | Smart Mandi{% endblock %}
+
+{% block content %}
+<section class="hero-panel compact-hero">
+    <div>
+        <div class="section-title">Admin Dashboard</div>
+        <h1>Feedback, user queries, and mandi search analytics in one place.</h1>
+        <p>
+            Review all user messages and track how many visitors opened the Find Mandi page or searched for mandis
+            during the selected time period.
+        </p>
+    </div>
+    <form method="get" class="filters">
+        <label class="label" for="range">Analytics Range</label>
+        <select id="range" name="range" class="select-field" onchange="this.form.submit()">
+            {% for value, label in filter_choices %}
+                <option value="{{ value }}" {% if selected_filter == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </form>
+</section>
+
+<section class="stats-grid">
+    <div class="stat-chip">
+        <span class="label">All Users</span>
+        <strong>{{ total_users }}</strong>
+    </div>
+    <div class="stat-chip">
+        <span class="label">All Feedback</span>
+        <strong>{{ total_feedback }}</strong>
+    </div>
+    <div class="stat-chip">
+        <span class="label">All Queries</span>
+        <strong>{{ total_queries }}</strong>
+    </div>
+    <div class="stat-chip">
+        <span class="label">{{ period_label }} Find Mandi Opens</span>
+        <strong>{{ find_mandi_page_views }}</strong>
+    </div>
+    <div class="stat-chip">
+        <span class="label">{{ period_label }} Mandi Searches</span>
+        <strong>{{ mandi_search_count }}</strong>
+    </div>
+</section>
+
+<section class="card-grid">
+    <article class="content-card">
+        <div class="section-title">Top Search Cities</div>
+        <div class="stack-list">
+            {% for item in top_searches %}
+                <div class="list-item row-between">
+                    <strong>{{ item.city }}</strong>
+                    <span>{{ item.total }} searches</span>
+                </div>
+            {% empty %}
+                <p class="muted">No mandi searches found for {{ period_label|lower }}.</p>
+            {% endfor %}
+        </div>
+    </article>
+
+    <article class="content-card">
+        <div class="section-title">Query Status</div>
+        <div class="stack-list">
+            {% for item in status_summary %}
+                <div class="list-item row-between">
+                    <strong>{{ item.status|title }}</strong>
+                    <span>{{ item.total }} queries</span>
+                </div>
+            {% empty %}
+                <p class="muted">No queries have been submitted yet.</p>
+            {% endfor %}
+        </div>
+    </article>
+</section>
+
+<section class="content-card section-gap">
+    <div class="results-head">
+        <h2>Recent Mandi Searches</h2>
+        <span class="pill">{{ period_label }}</span>
+    </div>
+    <div class="table-card">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>City</th>
+                    <th>Source</th>
+                    <th>Results</th>
+                    <th>User</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in recent_searches %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ item.city|default:"-" }}</td>
+                        <td>{{ item.search_source|title }}</td>
+                        <td>{{ item.result_count }}</td>
+                        <td>
+                            {% if item.user %}
+                                {{ item.user.username }}
+                            {% else %}
+                                Guest
+                            {% endif %}
+                        </td>
+                        <td>{{ item.searched_at|date:"d M Y, h:i A" }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6" class="empty-state">No mandi searches found for this period.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="content-card section-gap">
+    <div class="results-head">
+        <h2>All Feedback</h2>
+        <span class="pill">{{ total_feedback }} total</span>
+    </div>
+    <div class="table-card">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Rating</th>
+                    <th>Message</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in feedback_list %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ item.name }}</td>
+                        <td><b>{{ item.rating }}/5</b></td>
+                        <td><b>{{ item.message }}</b></td>
+                        <td>{{ item.created_at|date:"d M Y, h:i A" }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6" class="empty-state">No feedback has been submitted yet.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="content-card section-gap">
+    <div class="results-head">
+        <h2>All User Queries</h2>
+        <span class="pill">{{ total_queries }} total</span>
+    </div>
+    <div class="table-card">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Subject</th>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Message</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in query_list %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td><b>{{ item.subject }}</b></td>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.status|title }}</td>
+                        <td><b>{{ item.message }}</b></td>
+                        <td>{{ item.created_at|date:"d M Y, h:i A" }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="8" class="empty-state">No queries have been submitted yet.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

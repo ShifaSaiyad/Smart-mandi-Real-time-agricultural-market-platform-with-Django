@@ -1,0 +1,4 @@
+Django>=4.2,<5.0
+requests>=2.28
+APScheduler>=3.10
+django-apscheduler>=0.6

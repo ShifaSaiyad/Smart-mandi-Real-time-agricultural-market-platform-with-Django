@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ mandi }} | Smart Mandi{% endblock %}
+
+{% block content %}
+<section class="hero-panel compact-hero">
+    <div>
+        <div class="section-title">Market Price Dashboard</div>
+        <h1>{{ mandi }}</h1>
+        <p>
+            Live mode fetches only from the API. Cached mode lets you choose from the latest 3 saved CSV dates.
+            <br>Today in the app timezone: {{ today_display }}.
+        </p>
+    </div>
+    <a href="/" class="btn btn-secondary">Back to Home</a>
+</section>
+
+<form method="get" id="filterForm" class="toolbar controls">
+    <div class="mode-toggle">
+        <a href="?mode=cached{% if date_filter %}&date={{ date_filter }}{% endif %}&commodity={{ commodity_filter }}"
+           class="btn {% if mode == 'cached' %}is-active{% endif %} mode-btn btn-soft">
+            Cached Data
+        </a>
+        <a href="?mode=live&commodity={{ commodity_filter }}"
+           class="btn {% if mode == 'live' %}is-active{% endif %} mode-btn btn-soft">
+            {% if mode == 'live' %}<span class="live-chip"><span class="live-dot"></span>Live</span>{% else %}Live Data{% endif %}
+        </a>
+    </div>
+
+    <div class="filters">
+        <input type="hidden" name="mode" value="{{ mode }}">
+        {% if mode == 'cached' and date_options %}
+        <select name="date" class="select-field" onchange="document.getElementById('filterForm').submit()">
+            {% for option in date_options %}
+            <option value="{{ option.value }}" {% if date_filter == option.value %}selected{% endif %}>{{ option.label }}</option>
+            {% endfor %}
+        </select>
+        {% endif %}
+
+        {% if commodities %}
+        <select name="commodity" class="select-field">
+            <option value="">All Commodities</option>
+            {% for commodity in commodities %}
+            <option value="{{ commodity }}" {% if commodity_filter == commodity %}selected{% endif %}>{{ commodity }}</option>
+            {% endfor %}
+        </select>
+        {% endif %}
+
+        <button type="submit" class="btn btn-primary">Apply Filter</button>
+        {% if commodity_filter %}
+        <a href="?mode={{ mode }}{% if mode == 'cached' and date_filter %}&date={{ date_filter }}{% endif %}" class="btn btn-secondary">Clear Commodity</a>
+        {% endif %}
+    </div>
+</form>
+
+{% if error_msg %}
+<div class="info-banner warn">
+    <strong>{{ error_msg }}</strong>
+    <div class="helper-note">
+        Live mode does not use cached CSV data. If the government API is slow or unavailable, try cached mode for saved data.
+    </div>
+</div>
+{% elif matched > 0 %}
+<div class="info-banner ok">
+    <strong>{{ source_label }}</strong>
+    <div class="helper-note">
+        Showing {{ data|length }} record{{ data|length|pluralize }} for {{ mandi }}.
+        {% if mode == 'live' %}<br>The market date is already explained in the green message above, so it is hidden from the table below.{% endif %}
+    </div>
+</div>
+{% else %}
+<div class="info-banner err">
+    <strong>No records found for {{ mandi }} with the current filters.</strong>
+</div>
+{% endif %}
+
+<section class="stats-grid">
+    <div class="stat-chip">
+        <span class="label">Total Gujarat Records</span>
+        <strong>{{ total_records }}</strong>
+    </div>
+    <div class="stat-chip">
+        <span class="label">Matched This Mandi</span>
+        <strong>{{ matched }}</strong>
+    </div>
+    <div class="stat-chip">
+        <span class="label">Showing Now</span>
+        <strong>{{ data|length }}</strong>
+    </div>
+    {% if mode == 'cached' %}
+    <div class="stat-chip">
+        <span class="label">Cached Snapshots</span>
+        <strong>{{ available_dates|length }}</strong>
+    </div>
+    {% endif %}
+</section>
+
+<div class="table-card">
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Commodity</th>
+                <th>Variety</th>
+                <th>Grade</th>
+                <th>Min Price (Rs/Qtl)</th>
+                <th>Max Price (Rs/Qtl)</th>
+                <th>Modal Price (Rs/Qtl)</th>
+                {% if mode != 'live' %}
+                <th>Market Date</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in data %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td class="commodity">{{ item.commodity }}</td>
+                <td>{{ item.variety }}</td>
+                <td>{{ item.grade }}</td>
+                <td class="price-min">{{ item.min_price }}</td>
+                <td class="price-max">{{ item.max_price }}</td>
+                <td class="price-modal">{{ item.modal_price }}</td>
+                {% if mode != 'live' %}
+                <td>{{ item.arrival_date }}</td>
+                {% endif %}
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="{% if mode == 'live' %}7{% else %}8{% endif %}">
+                    <div class="empty-state">
+                        {% if commodity_filter %}
+                            No data matched the commodity <strong>{{ commodity_filter }}</strong>.<br>
+                            Clear the commodity filter and try again.
+                        {% elif mode == 'live' %}
+                            The live API did not return matching records for this mandi right now.<br>
+                            Cached mode can still show the latest saved CSV data.
+                        {% else %}
+                            No cached records are available for this mandi on the selected CSV date.<br>
+                            Choose another cached date or switch to Live mode.
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

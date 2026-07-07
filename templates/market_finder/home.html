@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Smart Mandi | Home{% endblock %}
+
+{% block content %}
+<section class="landing-hero">
+    <div class="landing-copy">
+        <div class="section-title">Smart Mandi Platform</div>
+        <h1>Find nearby mandis and check current crop prices.</h1>
+        <p>
+            Search a Gujarat city, view mandis within 20 km, and open each mandi to compare live API prices with the latest saved CSV data.
+        </p>
+        <div class="hero-actions">
+            <a href="{% url 'find_mandi' %}" class="btn btn-primary">Find Mandi</a>
+            <a href="{% url 'user_app:register' %}" class="btn btn-secondary">Start Now</a>
+        </div>
+        <div class="hero-metrics">
+            <div class="metric-card">
+                <strong>Market Search</strong>
+                <span>Search by city or current location</span>
+            </div>
+            <div class="metric-card">
+                <strong>Price Details</strong>
+                <span>Live API and latest 3 cached days</span>
+            </div>
+            <div class="metric-card">
+                <strong>Simple Support</strong>
+                <span>Feedback and query pages included</span>
+            </div>
+        </div>
+    </div>
+    <div class="landing-art">
+        <div class="hero-image-card">
+            <div class="hero-badge">Live Project</div>
+            <h2>One clear flow from map search to mandi prices.</h2>
+            <p>Use <code>/find_mandi/</code> to search, then open a mandi row for commodity prices.</p>
+        </div>
+    </div>
+</section>
+
+<section class="card-grid">
+    <article class="content-card feature-card">
+        <div class="section-title">Why This Project</div>
+        <h2>Made for quick mandi discovery.</h2>
+        <p class="card-copy">The finder keeps the map, nearby mandi list, and price details in a short practical workflow.</p>
+    </article>
+    <article class="content-card feature-card">
+        <div class="section-title">Main Sections</div>
+        <h2>Finder, prices, feedback, queries, and accounts.</h2>
+        <p class="card-copy">The main project sections are available from the top navigation without extra setup.</p>
+    </article>
+</section>
+{% endblock %}

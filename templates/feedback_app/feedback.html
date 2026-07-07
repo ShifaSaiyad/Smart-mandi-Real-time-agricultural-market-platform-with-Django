@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Feedback | Smart Mandi{% endblock %}
+
+{% block content %}
+<section class="hero-panel compact-hero">
+    <div>
+        <div class="section-title">Feedback Page</div>
+        <h1>Share your experience with Smart Mandi.</h1>
+        <p>Your feedback is stored in the database and can help improve the platform design, usability, and features.</p>
+    </div>
+</section>
+
+<section class="card-grid">
+    <article class="content-card form-card">
+        <form method="post" class="grid-form">
+            {% csrf_token %}
+            {% for field in form %}
+                <div>
+                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="form-error">{{ field.errors|join:', ' }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">Submit Feedback</button>
+        </form>
+    </article>
+
+    <article class="content-card">
+        <div class="section-title">Recent Feedback</div>
+        <div class="stack-list">
+            {% for item in latest_feedback %}
+                <div class="list-item">
+                    <strong>{{ item.name }}</strong>
+                    <span>{{ item.rating }} / 5</span>
+                    <p>{{ item.message }}</p>
+                </div>
+            {% empty %}
+                <p class="muted">No feedback has been submitted yet.</p>
+            {% endfor %}
+        </div>
+    </article>
+</section>
+{% endblock %}

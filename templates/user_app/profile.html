@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile | Smart Mandi{% endblock %}
+
+{% block content %}
+<section class="hero-panel compact-hero">
+    <div>
+        <div class="section-title">Profile Management</div>
+        <h1>Update your personal details.</h1>
+        <p>Edit the registration information stored in your account and keep your profile accurate.</p>
+    </div>
+</section>
+
+<section class="content-card form-card">
+    <form method="post" class="grid-form two-col-form">
+        {% csrf_token %}
+        {% for field in user_form %}
+            <div>
+                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <div class="form-error">{{ field.errors|join:', ' }}</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        {% for field in profile_form %}
+            <div class="{% if field.name == 'address' %}full-width{% endif %}">
+                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <div class="form-error">{{ field.errors|join:', ' }}</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <div class="full-width">
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+    </form>
+</section>
+{% endblock %}

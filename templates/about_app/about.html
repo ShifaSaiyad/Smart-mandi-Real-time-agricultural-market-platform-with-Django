@@ -1,0 +1,172 @@
+{% extends 'base.html' %} {# Remove or modify this line if you aren't using Django template inheritance #}
+
+{% block content %}
+<style>
+    /* --- Page Framework & Container Updates --- */
+    .about-page-wrapper {
+        background-color: #f9fafb;
+        padding: 60px 20px;
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    .about-max-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+    }
+
+    /* --- Universal Modern Card Styling --- */
+    .smart-card {
+        background: #ffffff;
+        border: 1px solid #f0f0f0;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02), 0 2px 6px rgba(0, 0, 0, 0.01);
+        padding: 40px;
+        box-sizing: border-box;
+    }
+
+    /* --- About Top Hero Section Layout --- */
+    .about-hero-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 40px;
+        align-items: center;
+    }
+
+    @media (max-width: 768px) {
+        .about-hero-grid {
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+    }
+
+    /* --- Section Labels/Tags --- */
+    .section-tag {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        font-weight: 700;
+        color: #1b4d3e; /* Forest Green */
+        margin-bottom: 16px;
+        display: inline-block;
+    }
+
+    /* --- Typography Overhaul --- */
+    .main-title {
+        font-size: 2.75rem;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        line-height: 1.2;
+        color: #111827;
+        margin: 0 0 20px 0;
+    }
+
+    .section-title {
+        font-size: 1.6rem;
+        font-weight: 700;
+        line-height: 1.35;
+        color: #1f2937;
+        margin: 0 0 16px 0;
+    }
+
+    .description-text {
+        font-size: 1.05rem;
+        line-height: 1.7;
+        color: #4b5563; /* Softer, readable dark grey */
+        margin: 0;
+    }
+
+    /* --- Modernized Feature Checklist --- */
+    .feature-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .feature-row {
+        background: #f4fcf7; /* Very soft light green */
+        border: 1px solid #d1f5e3;
+        color: #1b4d3e;
+        padding: 14px 20px;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .feature-row::before {
+        content: "✓";
+        font-weight: 700;
+        color: #2e7d32;
+        background: #e8f5e9;
+        width: 22px;
+        height: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: 0.8rem;
+        flex-shrink: 0;
+    }
+
+    /* --- Mission & Vision Split Grid --- */
+    .mission-vision-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 32px;
+    }
+
+    @media (max-width: 640px) {
+        .mission-vision-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Accent Left Borders for lower layout anchor points */
+    .accent-card-mission {
+        border-left: 5px solid #2e7d32;
+    }
+
+    .accent-card-vision {
+        border-left: 5px solid #1b4d3e;
+    }
+</style>
+
+<div class="about-page-wrapper">
+    <div class="about-max-container">
+        
+        <div class="smart-card about-hero-grid">
+            <div>
+                <span class="section-tag">About The Project</span>
+                <h1 class="main-title">About Smart Mandi</h1>
+                <p class="description-text">
+                    Smart Mandi helps farmers, traders, and buyers quickly discover mandi locations and track price data in a simple, streamlined dashboard environment.
+                </p>
+            </div>
+            
+            <div class="feature-list">
+                <div class="feature-row">Nearby mandi discovery with map support</div>
+                <div class="feature-row">User accounts for registration and profile management</div>
+                <div class="feature-row">Feedback and query collection directly inside the platform</div>
+            </div>
+        </div>
+
+        <div class="mission-vision-grid">
+            <div class="smart-card accent-card-mission">
+                <span class="section-tag">Mission</span>
+                <h2 class="section-title">Our mission is to make agricultural market information easier to access, easier to understand, and more useful in day-to-day decisions.</h2>
+            </div>
+
+            <div class="smart-card accent-card-vision">
+                <span class="section-tag">Vision</span>
+                <h2 class="section-title">Our vision is a modern mandi discovery platform with transparent data, easy communication, and a smooth user experience for every visitor.</h2>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock content %}

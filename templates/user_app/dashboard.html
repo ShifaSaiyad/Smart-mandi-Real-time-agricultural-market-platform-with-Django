@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard | Smart Mandi{% endblock %}
+
+{% block content %}
+<section class="hero-panel compact-hero">
+    <div>
+        <div class="section-title">User Dashboard</div>
+        <h1>Welcome, {{ request.user.first_name|default:request.user.username }}.</h1>
+        <p>Your account is active. You can review your registered details and keep your profile up to date from here.</p>
+    </div>
+    <a href="{% url 'user_app:profile' %}" class="btn btn-primary">Edit Profile</a>
+</section>
+
+<section class="stats-grid">
+    <div class="stat-chip">
+        <span class="label">Username</span>
+        <strong>{{ request.user.username }}</strong>
+    </div>
+    <div class="stat-chip">
+        <span class="label">Email</span>
+        <strong>{{ request.user.email }}</strong>
+    </div>
+    <div class="stat-chip">
+        <span class="label">Phone</span>
+        <strong>{{ profile.phone_number }}</strong>
+    </div>
+    <div class="stat-chip">
+        <span class="label">City</span>
+        <strong>{{ profile.city|default:"Not added" }}</strong>
+    </div>
+</section>
+
+<section class="content-card">
+    <div class="section-title">Saved Profile Data</div>
+    <div class="detail-grid">
+        <div><span class="detail-label">Full Name</span><strong>{{ request.user.first_name }} {{ request.user.last_name }}</strong></div>
+        <div><span class="detail-label">State</span><strong>{{ profile.state|default:"Not added" }}</strong></div>
+        <div><span class="detail-label">Pincode</span><strong>{{ profile.pincode|default:"Not added" }}</strong></div>
+        <div><span class="detail-label">Address</span><strong>{{ profile.address|default:"Not added" }}</strong></div>
+    </div>
+</section>
+{% endblock %}

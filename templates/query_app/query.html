@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Query | Smart Mandi{% endblock %}
+
+{% block content %}
+<section class="hero-panel compact-hero">
+    <div>
+        <div class="section-title">User Query</div>
+        <h1>Send your question or support request.</h1>
+        <p>Use this page to save project-related questions in the database so they can be reviewed and resolved later.</p>
+    </div>
+</section>
+
+<section class="card-grid">
+    <article class="content-card form-card">
+        <form method="post" class="grid-form">
+            {% csrf_token %}
+            {% for field in form %}
+                <div>
+                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="form-error">{{ field.errors|join:', ' }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            
+        </form>
+        <button type="submit" class="btn btn-primary">Submit Query</button>
+    </article>
+
+    <article class="content-card">
+        <div class="section-title">Recent Queries</div>
+        <div class="stack-list">
+            {% for item in recent_queries %}
+                <div class="list-item">
+                    <strong>{{ item.subject }}</strong>
+                    <span>{{ item.status|title }}</span>
+                    <p>{{ item.name }} | {{ item.email }}</p>
+                    <p>{{ item.message }}</p>
+                </div>
+            {% empty %}
+                <p class="muted">No queries have been submitted yet.</p>
+            {% endfor %}
+        </div>
+    </article>
+</section>
+{% endblock %}

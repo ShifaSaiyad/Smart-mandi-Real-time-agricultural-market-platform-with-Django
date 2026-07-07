@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520">
+  <defs>
+    <style>
+      .bg { fill: #fcfaf6; }
+      .title { font: 700 24px Arial, sans-serif; fill: #1d352b; }
+      .text { font: 16px Arial, sans-serif; fill: #222; }
+      .small { font: 14px Arial, sans-serif; fill: #333; }
+      .box { fill: white; stroke: #333; stroke-width: 2; rx: 10; }
+      .process { fill: #eef7f1; stroke: #2d6a4f; stroke-width: 2.4; }
+      .arrow { stroke: #333; stroke-width: 2; fill: none; marker-end: url(#a); }
+    </style>
+    <marker id="a" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0,0 10,4 0,8" fill="#333"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" width="900" height="520"/>
+  <text class="title" x="450" y="45" text-anchor="middle">Simple DFD - Smart Mandi 8</text>
+
+  <rect class="box" x="70" y="190" width="150" height="70" rx="10"/>
+  <text class="text" x="145" y="232" text-anchor="middle">User</text>
+
+  <ellipse class="process" cx="450" cy="225" rx="150" ry="70"/>
+  <text class="text" x="450" y="215" text-anchor="middle">Smart Mandi 8</text>
+  <text class="small" x="450" y="238" text-anchor="middle">Search, Login, Feedback</text>
+
+  <rect class="box" x="680" y="110" width="150" height="70" rx="10"/>
+  <text class="text" x="755" y="152" text-anchor="middle">Database</text>
+
+  <rect class="box" x="680" y="290" width="150" height="70" rx="10"/>
+  <text class="text" x="755" y="332" text-anchor="middle">Govt. API</text>
+
+  <path class="arrow" d="M220 225 H300"/>
+  <text class="small" x="260" y="210" text-anchor="middle">request</text>
+
+  <path class="arrow" d="M300 250 H220"/>
+  <text class="small" x="260" y="272" text-anchor="middle">response</text>
+
+  <path class="arrow" d="M600 195 C635 180, 645 165, 680 150"/>
+  <text class="small" x="640" y="165" text-anchor="middle">store / read</text>
+
+  <path class="arrow" d="M680 325 C645 310, 635 290, 600 260"/>
+  <text class="small" x="640" y="300" text-anchor="middle">price data</text>
+</svg>
