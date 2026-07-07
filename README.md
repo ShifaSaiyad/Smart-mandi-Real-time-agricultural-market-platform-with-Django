@@ -1,2 +1,2 @@
 # smart_mandi_8
-Smart Mandi connects farmers, traders, and buyers with mandi locations and market price information through a clean, user-friendly Django web platform.
+Smart Mandi is a Django-based agricultural market platform that helps users find nearby mandis, view commodity price data, manage accounts, submit feedback, and access admin analytics.
